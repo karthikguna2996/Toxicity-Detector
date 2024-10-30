@@ -1,0 +1,156 @@
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script>
+    <link rel="stylesheet" href="karthikstoxicitypredictor.css">
+    <script>
+        const threshold = 0.9;
+
+
+
+        toxicity.load(threshold).then(model => {
+
+
+            let inputElement = document.getElementById("inputElement");
+            console.log(inputElement)
+            let predictionNote = document.createElement('h1');
+            let waitingNote = document.getElementById('waitingNote');
+            let predDiv = document.getElementById('PredictionNote');
+            predDiv.removeChild(waitingNote);
+            predictionNote.textContent = "Hurrah our model is ready!!"
+            predictionNote.style.textAlign = 'center';
+            let br1 = document.createElement('br');
+
+            let predictionNote1 = document.createElement('h1');
+            predictionNote1.textContent = "please enter a comment , let's predict the toxicity of it !!!"
+            predictionNote1.style.margin = 'auto';
+            predictionNote.classList.add("animate-charcter")
+            predictionNote1.classList.add("animate-charcter")
+            let predictionNote2 = document.createElement('h1');
+            predictionNote2.textContent = "Conversation-AI is an initiative to protect voices in conversation.We develop machine learning models to classify the impact of comments"
+            predictionNote2.classList.add("animate-charcter");
+            predictionNote2.style.textAlign = 'center';
+            let predictionNote3 = document.createElement('h1');
+            predictionNote3.textContent = "Let's avoid online toxicity and harassment"
+            predictionNote3.classList.add("animate-charcter");
+            predictionNote3.style.textAlign = 'center';
+            predictionNote.style.color = 'green'
+            let loader = document.getElementById('loader');
+            loader.style.display = 'none';
+            predDiv.style.display = 'flex';
+            predDiv.style.flexDirection = 'column'
+            predDiv.style.alignItems = 'center';
+            predDiv.style.justifyContent = 'center';
+            predDiv.appendChild(predictionNote)
+
+            predDiv.appendChild(predictionNote1)
+            predDiv.appendChild(predictionNote2)
+            predDiv.appendChild(predictionNote3)
+            let text = ''
+
+            function changeEvent(event) {
+                text = event.target.value;
+                console.log(event.target.value)
+            }
+
+            let btnElement = document.getElementById('predictBtn')
+            btnElement.addEventListener('click', onClickPrecdict)
+            inputElement.addEventListener('change', changeEvent)
+
+            function onClickPrecdict() {
+                const sentences = [];
+                sentences.push(text)
+                document.getElementById('bg').innerHTML = "";
+                model.classify(sentences).then(predictions => {
+                    console.log(predictions);
+                    for (i = 0; i < 7; i++) {
+                        let isSafe = 'white'
+                        if (predictions[i].results[0].probabilities[1] > 0.5) {
+                            isSafe = 'red'
+                        }
+                        let k = "The above text seems to be " + predictions[i].label +
+                            " with probability of " +
+                            predictions[i].results[0].probabilities[1];
+                        let para = document.createElement('p');
+                        para.textContent = k;
+                        para.style.color = isSafe;
+                        para.classList.add("main-heading-primary");
+                        para.style.fontWeight = 'bold';
+                        para.style.fontSize = '25px';
+                        let bg = document.getElementById('bg');
+                        bg.appendChild(para);
+                        let mainbg = document.getElementById('mainbg');
+                        mainbg.appendChild(bg)
+
+
+
+                    }
+                });
+
+            }
+        });
+    </script>
+
+
+</head>
+
+<body>
+    <div>
+        <div class='bg'>
+            <div class="subcont">
+                <div class="container">
+                    <div class="row">
+                        <div class="neons col-12">
+                            <h1><em>Toxicity Predictor</em></h1>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <input id='inputElement' placeholder='Enter the text' />
+                </div>
+                <div>
+                    <button id='predictBtn'>
+                        <span class="animate-charcterr">Predict the output</span>
+                        <span class="shimmer"></span>
+                    </button>
+                </div>
+            </div>
+            <div id='PredictionNote'>
+                <div id='loader' style='text-align:center;'>
+                    <div class="loader">
+                        <svg viewBox="0 0 80 80">
+                            <circle id="test" cx="40" cy="40" r="32"></circle>
+                        </svg>
+                    </div>
+
+                    <div class="loader triangle">
+                        <svg viewBox="0 0 86 80">
+                            <polygon points="43 8 79 72 7 72"></polygon>
+                        </svg>
+                    </div>
+
+                    <div class="loader">
+                        <svg viewBox="0 0 80 80">
+                            <rect x="8" y="8" width="64" height="64"></rect>
+                        </svg>
+                    </div>
+
+
+                </div>
+                <h1 class="loaderr" id='waitingNote'>Please wait... our model is getting ready</h1>
+
+            </div>
+            <div id='mainbg'>
+
+                <div id="bg"></div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+<script src="karthikstoxicitypredictor.js"></script>
+
+</html>
